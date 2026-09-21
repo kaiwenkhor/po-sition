@@ -6,6 +6,6 @@ export const dynaPuff = DynaPuff({
 });
 
 export const fredoka = Fredoka({
-    weight: ["400"],
+    weight: ["400", "500"],
     subsets: ["latin"],
 });
