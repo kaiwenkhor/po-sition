@@ -2,23 +2,39 @@
 
 :root {
     --background: #ffffff;
-    --foreground: #171717;
+    --foreground: #0e1626; /* navy */
+    /* Button colours: primary is the filled colour, secondary is its counterpart */
+    --primary: #242549; /* indigo */
+    --secondary: #b1c4e5; /* sky */
+    --soft: #cba9cf; /* lilac */
 }
 
 @theme inline {
     --color-background: var(--background);
     --color-foreground: var(--foreground);
-    --color-primary: #8365ff;
-    --color-primary-soft: #ece4ff;
-    --color-chip: #f1f1f1;
+    --color-primary: var(--primary);
+    --color-secondary: var(--secondary);
+    --color-soft: var(--soft);
+    /* Palette (fixed values, from Figma) */
+    --color-navy: #0e1626;
+    --color-indigo: #242549;
+    --color-sky: #b1c4e5;
+    --color-blue: #516db3;
+    --color-periwinkle: #6a72b3;
+    --color-purple: #6459a3;
+    --color-lilac: #cba9cf;
     --color-surface: #d9d9d9;
     --color-surface-strong: #bababa;
 }
 
 @media (prefers-color-scheme: dark) {
     :root {
-        --background: #0a0a0a;
-        --foreground: #ededed;
+        --background: #000000;
+        --foreground: #b1c4e5; /* sky */
+        /* Primary and secondary swap places */
+        --primary: #b1c4e5; /* sky */
+        --secondary: #242549; /* indigo */
+        --soft: #6459a3; /* purple */
     }
 }
 
