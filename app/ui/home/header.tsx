@@ -1,22 +1,22 @@
 import Logo from "@/app/ui/logo";
-import { 
-    ArrowDownTrayIcon, 
-    SunIcon, 
-    MoonIcon, 
+import {
+    ArrowDownTrayIcon,
+    SunIcon,
+    MoonIcon,
 } from "@heroicons/react/24/outline";
 
 // TODO: Implement dark mode logic
 const isDark = false;
 
 const actions = [
-    { 
-        label: "Toggle light/dark mode", 
+    {
+        label: "Toggle light/dark mode",
         Icon: isDark ? MoonIcon : SunIcon,
         iconClass: "",
     },
-    { 
-        label: "Download", 
-        Icon: ArrowDownTrayIcon, 
+    {
+        label: "Download",
+        Icon: ArrowDownTrayIcon,
         iconClass: "p-0.5",
     },
 ];
@@ -31,9 +31,12 @@ export default function Header() {
                         key={label}
                         type="button"
                         aria-label={label}
-                        className="size-11 rounded-full bg-soft p-2 text-primary"
+                        className="size-11 rounded-full bg-icon-btn p-2 text-icon-btn-ink"
                     >
-                        <Icon className={`size-full ${iconClass}`} strokeWidth={1.75}/>
+                        <Icon
+                            className={`size-full ${iconClass}`}
+                            strokeWidth={1.75}
+                        />
                     </button>
                 ))}
             </div>
