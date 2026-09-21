@@ -24,6 +24,8 @@ export const viewport: Viewport = {
         { media: "(prefers-color-scheme: light)", color: "#F5F5F5" },
         { media: "(prefers-color-scheme: dark)", color: "#0A0A0A" },
     ],
+    maximumScale: 1,
+    userScalable: false,
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
