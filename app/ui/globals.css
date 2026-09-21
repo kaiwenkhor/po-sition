@@ -1,40 +1,55 @@
 @import "tailwindcss";
 
 :root {
-    --background: #ffffff;
+    --background: #fafafa;
     --foreground: #0e1626; /* navy */
-    /* Button colours: primary is the filled colour, secondary is its counterpart */
-    --primary: #242549; /* indigo */
-    --secondary: #b1c4e5; /* sky */
-    --soft: #cba9cf; /* lilac */
+    --logo: #516db3;
+    /* Accent for the selected photo thumbnail's ring */
+    --primary: #516db3;
+    /* Header icon buttons: fill and glyph trade places between themes */
+    --icon-btn: #ece4ff;
+    --icon-btn-ink: #6459a3;
+    /* Format chips: surface and ink trade places between default and selected */
+    --chip: #c7d3ec;
+    --chip-ink: #242549;
+    --chip-disabled: #a1a1a1;
+    --chip-disabled-ink: #f1f1f1;
+    /* Add-photo button: alpha is baked into the fill so the icon stays opaque */
+    --add-btn: rgb(0 0 0 / 0.3);
+    --add-btn-ink: #ffffff;
 }
 
 @theme inline {
     --color-background: var(--background);
-    --color-foreground: var(--foreground);
+    --color-logo: var(--logo);
     --color-primary: var(--primary);
-    --color-secondary: var(--secondary);
-    --color-soft: var(--soft);
-    /* Palette (fixed values, from Figma) */
-    --color-navy: #0e1626;
-    --color-indigo: #242549;
-    --color-sky: #b1c4e5;
-    --color-blue: #516db3;
-    --color-periwinkle: #6a72b3;
-    --color-purple: #6459a3;
-    --color-lilac: #cba9cf;
+    --color-icon-btn: var(--icon-btn);
+    --color-icon-btn-ink: var(--icon-btn-ink);
+    --color-chip: var(--chip);
+    --color-chip-ink: var(--chip-ink);
+    --color-chip-disabled: var(--chip-disabled);
+    --color-chip-disabled-ink: var(--chip-disabled-ink);
+    --color-add-btn: var(--add-btn);
+    --color-add-btn-ink: var(--add-btn-ink);
+    /* Grey placeholders, standing in until real photos fill the carousel */
     --color-surface: #d9d9d9;
     --color-surface-strong: #bababa;
 }
 
 @media (prefers-color-scheme: dark) {
     :root {
-        --background: #000000;
+        --background: #141414;
         --foreground: #b1c4e5; /* sky */
-        /* Primary and secondary swap places */
-        --primary: #b1c4e5; /* sky */
-        --secondary: #242549; /* indigo */
-        --soft: #6459a3; /* purple */
+        --logo: #b1c4e5;
+        --primary: #b1c4e5;
+        --icon-btn: #6459a3;
+        --icon-btn-ink: #ece4ff;
+        --chip: #181830;
+        --chip-ink: #b1c4e5;
+        --add-btn: rgb(255 255 255 / 0.2);
+        --add-btn-ink: #d4d4d4;
+        /* Disabled greys are shared with light mode: the Disabled-Dark
+           variant was not in the spec. */
     }
 }
 
@@ -42,4 +57,7 @@ body {
     background: var(--background);
     color: var(--foreground);
     overscroll-behavior: none;
+    /* Scrolling only: no double-tap zoom, no pinch zoom. The photo canvas
+       will provide its own pinch gesture. */
+    touch-action: pan-x pan-y;
 }
