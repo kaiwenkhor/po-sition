@@ -1,26 +1,62 @@
 @import "tailwindcss";
 
+/* Each token carries both values. light-dark() picks one according to the
+   root's color-scheme, so the theme switches by changing color-scheme alone -
+   no duplicated dark block to keep in sync. */
 :root {
-    --background: #fafafa;
-    --foreground: #0e1626; /* navy */
-    --logo: #516db3;
+    color-scheme: light dark;
+
+    --background: light-dark(#fafafa, #141414);
+    --foreground: light-dark(#0e1626, #b1c4e5); /* navy / sky */
+    --logo: light-dark(#516db3, #b1c4e5);
     /* Accent for the selected photo thumbnail's ring */
-    --primary: #516db3;
+    --primary: light-dark(#516db3, #b1c4e5);
     /* Header icon buttons: fill and glyph trade places between themes */
-    --icon-btn: #ece4ff;
-    --icon-btn-ink: #6459a3;
+    --icon-btn: light-dark(#ece4ff, #6459a3);
+    --icon-btn-ink: light-dark(#6459a3, #ece4ff);
     /* Format chips: surface and ink trade places between default and selected */
-    --chip: #c7d3ec;
-    --chip-ink: #242549;
+    --chip: light-dark(#c7d3ec, #181830);
+    --chip-ink: light-dark(#242549, #b1c4e5);
+    /* Disabled greys are shared: the Disabled-Dark variant was not in the spec. */
     --chip-disabled: #a1a1a1;
     --chip-disabled-ink: #f1f1f1;
     /* Add-photo button: alpha is baked into the fill so the icon stays opaque */
-    --add-btn: rgb(0 0 0 / 0.3);
-    --add-btn-ink: #ffffff;
+    --add-btn: light-dark(rgb(0 0 0 / 0.25), rgb(255 255 255 / 0.2));
+    --add-btn-hover: light-dark(rgb(0 0 0 / 0.4), rgb(255 255 255 / 0.32));
+    --add-btn-active: light-dark(rgb(0 0 0 / 0.55), rgb(255 255 255 / 0.45));
+    --add-btn-ink: light-dark(#ffffff, #d4d4d4);
+    /* Delete drop target */
+    --danger: light-dark(#c0392b, #e06c5b);
+    --danger-ink: #ffffff;
+}
+
+/* No stored preference: the system decides. A tap sets data-theme on <html>,
+   which overrides it until the next refresh. */
+:root[data-theme="light"] {
+    color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+    color-scheme: dark;
+}
+
+/* Lets `dark:` be used for one-offs that are not colour tokens. It has to match
+   the same two cases the tokens do: the override, or the system when there is
+   no override. */
+@custom-variant dark {
+    @media (prefers-color-scheme: dark) {
+        :root:not([data-theme="light"]) & {
+            @slot;
+        }
+    }
+    :root[data-theme="dark"] & {
+        @slot;
+    }
 }
 
 @theme inline {
     --color-background: var(--background);
+    --color-foreground: var(--foreground);
     --color-logo: var(--logo);
     --color-primary: var(--primary);
     --color-icon-btn: var(--icon-btn);
@@ -30,33 +66,109 @@
     --color-chip-disabled: var(--chip-disabled);
     --color-chip-disabled-ink: var(--chip-disabled-ink);
     --color-add-btn: var(--add-btn);
+    --color-add-btn-hover: var(--add-btn-hover);
+    --color-add-btn-active: var(--add-btn-active);
     --color-add-btn-ink: var(--add-btn-ink);
+    --color-danger: var(--danger);
+    --color-danger-ink: var(--danger-ink);
+    /* Editor entrance and exit. The frame eases up slightly so opening reads as
+       the photo coming forward rather than a panel being swapped in. */
+    --animate-overlay-in: overlay-in 200ms ease-out;
+    --animate-overlay-out: overlay-out 140ms ease-in forwards;
+    --animate-frame-in: frame-in 260ms cubic-bezier(0.2, 0.9, 0.3, 1);
+    --animate-frame-out: frame-out 140ms ease-in forwards;
     /* Grey placeholders, standing in until real photos fill the carousel */
     --color-surface: #d9d9d9;
     --color-surface-strong: #bababa;
 }
 
-@media (prefers-color-scheme: dark) {
-    :root {
-        --background: #141414;
-        --foreground: #b1c4e5; /* sky */
-        --logo: #b1c4e5;
-        --primary: #b1c4e5;
-        --icon-btn: #6459a3;
-        --icon-btn-ink: #ece4ff;
-        --chip: #181830;
-        --chip-ink: #b1c4e5;
-        --add-btn: rgb(255 255 255 / 0.2);
-        --add-btn-ink: #d4d4d4;
-        /* Disabled greys are shared with light mode: the Disabled-Dark
-           variant was not in the spec. */
+@keyframes overlay-in {
+    from {
+        opacity: 0;
     }
+}
+
+@keyframes overlay-out {
+    to {
+        opacity: 0;
+    }
+}
+
+@keyframes frame-in {
+    from {
+        opacity: 0;
+        transform: scale(0.94);
+    }
+}
+
+@keyframes frame-out {
+    to {
+        opacity: 0;
+        transform: scale(0.96);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    [class*="animate-overlay"],
+    [class*="animate-frame"] {
+        animation: none !important;
+    }
+}
+
+/* Theme switching. color-scheme itself cannot animate, but the colours derived
+   from it can: while this class is on <html>, every element eases its colour
+   properties, so the whole app crossfades instead of snapping. It is removed
+   again once the switch is done, so it never slows ordinary state changes. */
+:root.theme-transition,
+:root.theme-transition *,
+:root.theme-transition *::before,
+:root.theme-transition *::after {
+    transition:
+        background-color 260ms ease,
+        border-color 260ms ease,
+        color 260ms ease,
+        fill 260ms ease,
+        stroke 260ms ease,
+        outline-color 260ms ease !important;
+    transition-delay: 0s !important;
+}
+
+/* Opt-out for elements whose fill and text colours trade places between
+   themes: a crossfade would pass through a point where the two match and the
+   content vanishes. These switch instantly instead. */
+:root.theme-transition .theme-instant,
+:root.theme-transition .theme-instant * {
+    transition: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    :root.theme-transition,
+    :root.theme-transition *,
+    :root.theme-transition *::before,
+    :root.theme-transition *::after {
+        transition: none !important;
+    }
+}
+
+/* The app shell owns every scroll. Locking the document kills pull-to-refresh
+   and the rubber-band bounce; overscroll-behavior stops an inner scroller from
+   chaining its overscroll up to the page. */
+html,
+body {
+    height: 100%;
+    overflow: hidden;
+    overscroll-behavior: none;
 }
 
 body {
     background: var(--background);
     color: var(--foreground);
-    overscroll-behavior: none;
+    /* This is an app, not a document: nothing here is text to select, and a
+       long press should never raise the "Save Image"/"Copy" callout, because a
+       long press is our own drag gesture. */
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
     /* Scrolling only: no double-tap zoom, no pinch zoom. The photo canvas
        will provide its own pinch gesture. */
     touch-action: pan-x pan-y;
