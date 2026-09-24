@@ -1,5 +1,9 @@
 import type { MetadataRoute } from "next";
 
+// Required by `output: export`: the manifest is a route, so it has to be
+// declared static for the build to emit it as a file.
+export const dynamic = "force-static";
+
 export default function manifest(): MetadataRoute.Manifest {
     return {
         name: "PO-sition",
