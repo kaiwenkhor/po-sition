@@ -25,6 +25,14 @@
     --add-btn-hover: light-dark(rgb(0 0 0 / 0.4), rgb(255 255 255 / 0.32));
     --add-btn-active: light-dark(rgb(0 0 0 / 0.55), rgb(255 255 255 / 0.45));
     --add-btn-ink: light-dark(#ffffff, #d4d4d4);
+    /* Sits behind a photo while it loads, and shows through the hairline that
+       a rounded container's clip antialiasing leaves at the edge -- so in dark
+       mode a light grey here reads as a white line around the photo. */
+    --surface: light-dark(#d9d9d9, #2a2a2a);
+    --surface-strong: light-dark(#bababa, #3d3d3d);
+    /* Welcome screen's call to action */
+    --cta: light-dark(#ece4ff, #cba9cf);
+    --cta-ink: light-dark(#6459a3, #0a0a0a);
     /* Delete drop target */
     --danger: light-dark(#c0392b, #e06c5b);
     --danger-ink: #ffffff;
@@ -69,6 +77,8 @@
     --color-add-btn-hover: var(--add-btn-hover);
     --color-add-btn-active: var(--add-btn-active);
     --color-add-btn-ink: var(--add-btn-ink);
+    --color-cta: var(--cta);
+    --color-cta-ink: var(--cta-ink);
     --color-danger: var(--danger);
     --color-danger-ink: var(--danger-ink);
     /* Editor entrance and exit. The frame eases up slightly so opening reads as
@@ -77,9 +87,9 @@
     --animate-overlay-out: overlay-out 140ms ease-in forwards;
     --animate-frame-in: frame-in 260ms cubic-bezier(0.2, 0.9, 0.3, 1);
     --animate-frame-out: frame-out 140ms ease-in forwards;
-    /* Grey placeholders, standing in until real photos fill the carousel */
-    --color-surface: #d9d9d9;
-    --color-surface-strong: #bababa;
+    /* Placeholders behind photos */
+    --color-surface: var(--surface);
+    --color-surface-strong: var(--surface-strong);
 }
 
 @keyframes overlay-in {
