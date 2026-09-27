@@ -40,7 +40,7 @@ export type Photo = {
     transform: Transform;
 };
 
-export type Progress = { done: number; total: number };
+export type Progress = { done: number; total: number; label: string };
 
 /** A thumbnail being dragged out of the strip. `overDelete` drives the drop
  *  target's highlight, and is only written when it actually changes. */
@@ -53,6 +53,10 @@ type PhotoContextValue = {
     format: Format;
     ratio: number;
     canAdd: boolean;
+    /** Opens the system photo picker. The input lives here so the strip and the
+     *  welcome screen can both raise it without passing refs around. */
+    pickPhotos: () => void;
+    setProgress: (progress: Progress | null) => void;
     drag: Drag | null;
     editingIndex: number | null;
     addPhotos: (files: File[]) => void;
@@ -98,13 +102,14 @@ export function PhotoProvider({ children }: { children: React.ReactNode }) {
     const [drag, setDrag] = useState<Drag | null>(null);
     const [editingIndex, setEditingIndex] = useState<number | null>(null);
     const [format, setFormat] = useState<Format>("3:4");
+    const inputRef = useRef<HTMLInputElement>(null);
 
     async function addPhotos(files: File[]) {
         const room = Math.max(0, MAX_PHOTOS - photos.length);
         const queue = files.slice(0, room);
         if (queue.length === 0) return;
 
-        setProgress({ done: 0, total: queue.length });
+        setProgress({ done: 0, total: queue.length, label: "Adding" });
 
         // One at a time: each source photo is briefly decoded at full size, so
         // processing in parallel would spike memory exactly as we are avoiding.
@@ -122,7 +127,7 @@ export function PhotoProvider({ children }: { children: React.ReactNode }) {
                 setPhotos((current) =>
                     current.length >= MAX_PHOTOS ? current : [...current, photo],
                 );
-                setProgress({ done: i + 1, total: queue.length });
+                setProgress({ done: i + 1, total: queue.length, label: "Adding" });
             }
         } finally {
             setProgress(null);
@@ -195,6 +200,8 @@ export function PhotoProvider({ children }: { children: React.ReactNode }) {
                 format,
                 ratio: FORMATS.find((f) => f.key === format)!.ratio,
                 canAdd: photos.length < MAX_PHOTOS,
+                pickPhotos: () => inputRef.current?.click(),
+                setProgress,
                 drag,
                 editingIndex,
                 addPhotos,
@@ -208,6 +215,20 @@ export function PhotoProvider({ children }: { children: React.ReactNode }) {
                 setFormat,
             }}
         >
+            <input
+                ref={inputRef}
+                type="file"
+                accept="image/*"
+                multiple
+                // sr-only rather than hidden: iOS Safari will not open the
+                // picker for an input that is display:none.
+                className="sr-only"
+                onChange={(event) => {
+                    addPhotos(Array.from(event.target.files ?? []));
+                    // Lets the same photo be picked again.
+                    event.target.value = "";
+                }}
+            />
             {children}
         </PhotoContext.Provider>
     );

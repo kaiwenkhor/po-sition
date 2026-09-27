@@ -19,15 +19,14 @@ export default function PhotoStrip() {
         photos,
         selectedIndex,
         canAdd,
+        pickPhotos,
         drag,
-        addPhotos,
         removePhoto,
         movePhoto,
         select,
         setDrag,
     } = usePhotos();
 
-    const inputRef = useRef<HTMLInputElement>(null);
     const listRef = useRef<HTMLUListElement>(null);
     const ghostRef = useRef<HTMLDivElement>(null);
 
@@ -231,22 +230,7 @@ export default function PhotoStrip() {
     const dragged = drag ? photos[drag.index] : null;
 
     return (
-        <footer className="shrink-0 px-4 pb-[calc(env(safe-area-inset-bottom)+6px)] pt-4">
-            <input
-                ref={inputRef}
-                type="file"
-                accept="image/*"
-                multiple
-                // sr-only, not hidden: iOS Safari will not open the picker for
-                // an input that is display:none
-                className="sr-only"
-                onChange={(event) => {
-                    addPhotos(Array.from(event.target.files ?? []));
-                    // lets the same photo to be added again
-                    event.target.value = "";
-                }}
-            />
-
+        <footer className="shrink-0 px-4 pb-[calc(env(safe-area-inset-bottom)+6px)] sm:pb-[calc(env(safe-area-inset-bottom)+16px)] pt-4">
             <ul ref={listRef} className="-m-1 flex gap-1.5 overflow-x-auto p-1">
                 {photos.map((photo, i) => (
                     <li key={photo.id} data-thumb className="shrink-0">
@@ -288,7 +272,7 @@ export default function PhotoStrip() {
                         <button
                             type="button"
                             aria-label="Add photos"
-                            onClick={() => inputRef.current?.click()}
+                            onClick={pickPhotos}
                             className="h-12 w-9 rounded-lg bg-add-btn p-2 text-add-btn-ink transition-colors hover:bg-add-btn-hover active:bg-add-btn-active"
                         >
                             <PlusIcon className="size-full" strokeWidth={1.75} />
