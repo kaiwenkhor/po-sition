@@ -230,7 +230,7 @@ export default function PhotoStrip() {
     const dragged = drag ? photos[drag.index] : null;
 
     return (
-        <footer className="shrink-0 px-4 pb-[calc(env(safe-area-inset-bottom)+6px)] sm:pb-[calc(env(safe-area-inset-bottom)+16px)] pt-4">
+        <footer className="shrink-0 px-4 pb-[calc(env(safe-area-inset-bottom)+16px)] pt-4">
             <ul ref={listRef} className="-m-1 flex gap-1.5 overflow-x-auto p-1">
                 {photos.map((photo, i) => (
                     <li key={photo.id} data-thumb className="shrink-0">
