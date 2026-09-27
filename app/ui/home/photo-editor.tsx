@@ -18,6 +18,7 @@ import {
     resolveTransform,
     type Transform,
 } from "@/app/ui/home/image-utils";
+import { fredoka } from "@/app/ui/fonts";
 
 /** Sharper than the 1200px browsing copy, so zooming in does not look soft. */
 const EDIT_MAX_EDGE = 2400;
@@ -385,7 +386,7 @@ function EditorSurface({ index }: { index: number }) {
                     aria-label="Reset edits"
                     onClick={resetEdits}
                     disabled={isUntouched}
-                    className={`${controlButton} gap-2 w-auto rounded-full bg-white/15 px-4 text-sm text-white hover:bg-white/30 active:bg-white/40 disabled:opacity-35 disabled:active:scale-100`}
+                    className={`${controlButton} ${fredoka.className} gap-2 w-auto rounded-full bg-white/15 px-4 text-base text-white hover:bg-white/30 active:bg-white/40 disabled:opacity-35 disabled:active:scale-100`}
                 >
                     <ArrowUturnLeftIcon className="size-4 shrink-0" strokeWidth={2} />
                     Reset

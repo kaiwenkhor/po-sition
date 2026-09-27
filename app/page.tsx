@@ -5,6 +5,7 @@ import BottomControls from "@/app/ui/home/bottom-controls";
 import PhotoStrip from "@/app/ui/home/photo-strip";
 import LoadingOverlay from "@/app/ui/home/loading-overlay";
 import PhotoEditor from "@/app/ui/home/photo-editor";
+import WelcomeOverlay from "@/app/ui/home/welcome-overlay";
 import { PhotoProvider } from "@/app/ui/home/photo-context";
 
 export const metadata: Metadata = {
@@ -22,6 +23,7 @@ export default function Page() {
                 </main>
                 <PhotoStrip />
             </div>
+            <WelcomeOverlay />
             <PhotoEditor />
             <LoadingOverlay />
         </PhotoProvider>

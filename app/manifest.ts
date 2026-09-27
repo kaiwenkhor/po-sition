@@ -12,16 +12,16 @@ export default function manifest(): MetadataRoute.Manifest {
             "A simple tool that allows you to reposition photos to your liking before posting them on social media.",
         start_url: "/",
         display: "standalone",
-        background_color: "#ffffff",
-        theme_color: "#000000",
+        background_color: "#fafafa",
+        theme_color: "#fafafa",
         icons: [
             {
-                src: "/icon-192x192.png",
+                src: "/position-logo-192.png",
                 sizes: "192x192",
                 type: "image/png",
             },
             {
-                src: "/icon-512x512.png",
+                src: "/position-logo-512.png",
                 sizes: "512x512",
                 type: "image/png",
             },

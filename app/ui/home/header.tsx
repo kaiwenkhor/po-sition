@@ -1,12 +1,17 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import Logo from "@/app/ui/logo";
+import { usePhotos } from "@/app/ui/home/photo-context";
+import { exportPhotos } from "@/app/ui/home/export";
 import {
     ArrowDownTrayIcon,
-    SunIcon,
-    MoonIcon,
+    SunIcon, 
 } from "@heroicons/react/24/outline";
+import { MoonIcon } from "@heroicons/react/24/solid";
+
+/** Spacing between downloads in the no-share-sheet fallback. */
+const DOWNLOAD_GAP_MS = 350;
 
 const iconButton =
     "theme-instant size-11 rounded-full bg-icon-btn p-2 text-icon-btn-ink " +
@@ -27,6 +32,69 @@ function currentTheme() {
 const TRANSITION_MS = 260;
 
 export default function Header() {
+    const { photos, ratio, progress, setProgress } = usePhotos();
+    // Held when the share sheet could not be opened straight away, so a second
+    // tap can hand over the files that are already rendered.
+    const [pending, setPending] = useState<File[] | null>(null);
+
+    async function share(files: File[]) {
+        if (navigator.canShare?.({ files })) {
+            await navigator.share({ files, title: "PO-sition" });
+            return;
+        }
+        // No share sheet: fall back to downloads, numbered so the order
+        // survives anywhere that sorts by filename.
+        for (const [i, file] of files.entries()) {
+            // Requesting them all in one task makes browsers coalesce the
+            // downloads and keep only the last, so each one gets its own turn.
+            if (i > 0) await new Promise((resolve) => setTimeout(resolve, DOWNLOAD_GAP_MS));
+
+            const url = URL.createObjectURL(file);
+            const link = document.createElement("a");
+            link.href = url;
+            link.download = file.name;
+            // Some browsers ignore a click on an anchor that is not in the
+            // document, so it has to be attached for the moment it is used.
+            link.style.display = "none";
+            document.body.append(link);
+            link.click();
+            link.remove();
+
+            // Revoking in the same tick can cancel the download before the
+            // browser has read the blob.
+            setTimeout(() => URL.revokeObjectURL(url), 10_000);
+        }
+    }
+
+    async function download() {
+        if (pending) {
+            // Second tap: user activation is fresh, so this one will be allowed.
+            const files = pending;
+            setPending(null);
+            await share(files);
+            return;
+        }
+        if (photos.length === 0 || progress) return;
+
+        setProgress({ done: 0, total: photos.length, label: "Exporting" });
+        try {
+            const files = await exportPhotos(photos, ratio, (done) =>
+                setProgress({ done, total: photos.length, label: "Exporting" }),
+            );
+            setProgress(null);
+            try {
+                await share(files);
+            } catch (error) {
+                // Safari refuses a share that is no longer tied to a tap, and
+                // rendering takes long enough to lose that. Keep the files and
+                // let the next tap send them.
+                if ((error as Error)?.name === "NotAllowedError") setPending(files);
+            }
+        } finally {
+            setProgress(null);
+        }
+    }
+
     const endTransition = useRef<ReturnType<typeof setTimeout> | null>(null);
 
     function toggleTheme() {
@@ -55,7 +123,7 @@ export default function Header() {
     }
 
     return (
-        <header className="flex shrink-0 items-center justify-between px-4 pb-5 pt-[calc(env(safe-area-inset-top)+6px)]">
+        <header className="flex shrink-0 items-center justify-between px-4 pb-5 pt-[calc(env(safe-area-inset-top)+6px)] sm:pt-[calc(env(safe-area-inset-top)+16px)]">
             <Logo />
             <div className="flex gap-3">
                 <button
@@ -76,8 +144,10 @@ export default function Header() {
 
                 <button
                     type="button"
-                    aria-label="Download"
-                    className={iconButton}
+                    aria-label={pending ? "Save photos" : "Download"}
+                    onClick={download}
+                    disabled={photos.length === 0}
+                    className={`${iconButton} disabled:opacity-40 disabled:active:scale-100`}
                 >
                     <ArrowDownTrayIcon
                         className="size-full p-0.5"

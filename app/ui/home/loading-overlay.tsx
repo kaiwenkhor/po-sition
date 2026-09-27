@@ -8,7 +8,7 @@ export default function LoadingOverlay() {
 
     if (!progress) return null;
 
-    const { done, total } = progress;
+    const { done, total, label } = progress;
     const percent = total === 0 ? 0 : Math.round((done / total) * 100);
 
     return (
@@ -30,7 +30,7 @@ export default function LoadingOverlay() {
                 <p
                     className={`${fredoka.className} text-base font-medium text-chip-ink`}
                 >
-                    Adding {done} of {total}
+                    {label} {done} of {total}
                 </p>
                 
                 {/* Bar */}
