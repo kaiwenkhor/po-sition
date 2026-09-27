@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import "@/app/ui/globals.css";
+import { Analytics } from "@vercel/analytics/next";
 import { dynaPuff } from "@/app/ui/fonts";
 
 export const metadata: Metadata = {
@@ -33,6 +34,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <html lang="en">
             <body className={`${dynaPuff.className} antialiased min-h-dvh`}>
                 {children}
+                {/* Cookie-less page analytics. Only reports once deployed;
+                    it is inert on localhost. */}
+                <Analytics />
             </body>
         </html>
     );
