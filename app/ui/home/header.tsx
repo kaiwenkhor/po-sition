@@ -123,7 +123,7 @@ export default function Header() {
     }
 
     return (
-        <header className="flex shrink-0 items-center justify-between px-4 pb-5 pt-[calc(env(safe-area-inset-top)+6px)] sm:pt-[calc(env(safe-area-inset-top)+16px)]">
+        <header className="flex shrink-0 items-center justify-between px-4 pb-5 pt-[calc(env(safe-area-inset-top)+16px)]">
             <Logo />
             <div className="flex gap-3">
                 <button
